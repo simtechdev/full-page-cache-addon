@@ -23,6 +23,7 @@ fn_register_hooks(
     'data_keeper_backup_files',
     'url_post',
     'update_customization_mode',
+    'get_route',
 
     // Used to trigger VCL regeneration requirement
     'update_company',

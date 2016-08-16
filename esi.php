@@ -40,6 +40,11 @@ if (isset($_REQUEST['block_id'],
 
     $_SERVER['QUERY_STRING'] = parse_url($requested_uri, PHP_URL_QUERY);
     $_SERVER['REQUEST_URI'] = $requested_uri;
+    
+    unset($_REQUEST['block_id']);
+    unset($_REQUEST['snapping_id']);
+    unset($_REQUEST['lang_code']);
+    unset($_REQUEST['requested_uri']);
 
     require_once $root_dir . '/init.php';
 

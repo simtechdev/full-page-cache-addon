@@ -304,10 +304,18 @@ function fn_full_page_cache_update_addon_status_post()
     fn_full_page_cache_require_vcl_regeneration();
 }
 
-function fn_full_page_cache_update_customization_mode($modes, $enabled_modes) {
+function fn_full_page_cache_update_customization_mode($modes, $enabled_modes)
+{
     if (empty($enabled_modes)) {
         fn_full_page_cache_enable_cache_by_cookie();
     } else {
         fn_full_page_cache_disable_cache_by_cookie();
+    }
+}
+
+function fn_full_page_cache_get_route($req, $result, $area, &$is_allowed_url)
+{
+    if (!$is_allowed_url) {
+        $is_allowed_url = $_SERVER['SCRIPT_NAME'] == Registry::get('config.current_path') . '/esi.php';
     }
 }
