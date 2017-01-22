@@ -22,14 +22,14 @@ use Tygh\Application;
 final class Addon
 {
     /**
-     * Cache-enabling VCL file name
+     * Cache-enabling VCL name
      */
-    const ENABLING_VCL_FILE_NAME = 'enabled.vcl';
+    const ENABLING_VCL_NAME = 'enabled';
 
     /**
-     * Cache-disabling VCL file name
+     * Cache-disabling VCL name
      */
-    const DISABLING_VCL_FILE_NAME = 'disabled.vcl';
+    const DISABLING_VCL_NAME = 'disabled';
 
     /**
      * @var \Tygh\Application Instance of Application container.
@@ -93,11 +93,27 @@ final class Addon
     }
 
     /**
+     * @return string Cache-enabling VCL name.
+     */
+    public function getEnablingVCLName()
+    {
+        return static::ENABLING_VCL_NAME;
+    }
+
+    /**
      * @return string Path to cache-enabling VCL file.
      */
     public function getEnablingVCLFilePath()
     {
-        return $this->varnish_vcl_directory . DIRECTORY_SEPARATOR . static::ENABLING_VCL_FILE_NAME;
+        return $this->varnish_vcl_directory . DIRECTORY_SEPARATOR . $this->getEnablingVCLName() . '.vcl';
+    }
+
+    /**
+     * @return string Cache-disabling VCL name.
+     */
+    public function getDisablingVCLName()
+    {
+        return static::DISABLING_VCL_NAME;
     }
 
     /**
@@ -105,7 +121,7 @@ final class Addon
      */
     public function getDisablingVCLFilePath()
     {
-        return $this->varnish_vcl_directory . DIRECTORY_SEPARATOR . static::DISABLING_VCL_FILE_NAME;
+        return $this->varnish_vcl_directory . DIRECTORY_SEPARATOR . $this->getDisablingVCLName() . '.vcl';
     }
 
     /**
@@ -294,7 +310,7 @@ final class Addon
      */
     public function useEnablingVCLFile()
     {
-        $this->useVCLFile($this->getEnablingVCLFilePath());
+        $this->useVCLFile($this->getEnablingVCLFilePath(), $this->getEnablingVCLName());
     }
 
     /**
@@ -304,7 +320,7 @@ final class Addon
      */
     public function useDisablingVCLFile()
     {
-        $this->useVCLFile($this->getDisablingVCLFilePath());
+        $this->useVCLFile($this->getDisablingVCLFilePath(), $this->getDisablingVCLName());
     }
 
     /**
@@ -316,7 +332,7 @@ final class Addon
      *
      * @return void
      */
-    public function useVCLFile($vcl_file_path)
+    public function useVCLFile($vcl_file_path, $vcl_name)
     {
         $varnish_adm = $this->getVarnishAdmInstance();
 
@@ -327,14 +343,14 @@ final class Addon
         }
 
         foreach ($vcl_list as $loaded_vcl => $is_enabled) {
-            if ($loaded_vcl == $vcl_file_path) {
+            if ($loaded_vcl == $vcl_name) {
                 $varnish_adm->discardVcl($loaded_vcl);
 
                 break;
             }
         }
 
-        $varnish_adm->loadAndUseVclFromFile($vcl_file_path, $vcl_file_path);
+        $varnish_adm->loadAndUseVclFromFile($vcl_file_path, $vcl_name);
 
         $varnish_adm->stop();
         $varnish_adm->start();
